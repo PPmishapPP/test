@@ -1,29 +1,29 @@
-package ru.mishapp;
+package ru.mishapp.numbers;
 
-public class RomeCalc extends ArabCalc{
 
-    public RomeCalc(String str) throws WrongStringException {
-        String[] strArr = super.getArr(str);
-        super.setFirstNumber(RomeNumber.valueOf(strArr[0]).getValue());
-        super.setAction(Action.getAction(strArr[1].charAt(0)));
-        super.setSecondNumber(RomeNumber.valueOf(strArr[2]).getValue());
+import ru.mishapp.WrongStringException;
+
+public class RomeNumber extends ArabNumber {
+
+
+    public RomeNumber(String stringValue) throws WrongStringException {
+        super.setValue(Number.valueOf(stringValue).getValue());
+        if (super.getValue() == 0) {
+            throw new WrongStringException("Калькулятор должен принимать на вход числа от 1 до 10 включительно, не более. ");
+        }
     }
 
     @Override
-    public String answer() throws WrongStringException {
-        return arabToRome(super.answer());
-    }
-
-    private String arabToRome(String arabNumber) throws WrongStringException {
+    public String print() throws WrongStringException {
         StringBuilder romeNumber = new StringBuilder();
-        int n = Integer.parseInt(arabNumber);
-        if (n < 0) {
+        int n = super.getValue();
+        if (n < 1) {
             throw new WrongStringException("Хотя в задании и сказано \"На выходе числа не ограничиваются по величине и могут быть любыми.\"," +
                     " википедия говорит, что римскими цифрми записывают только натуральные числа");
         }
         if (n == 100) return "C";
         int tens = n / 10;
-        if (tens == 9){
+        if (tens == 9) {
             romeNumber.append("XC");
             n = n - 90;
         }
@@ -35,18 +35,19 @@ public class RomeCalc extends ArabCalc{
         tens = n / 10;
         if (tens == 4) {
             romeNumber.append("XL");
-        }else {
+        } else {
             romeNumber.append("X".repeat(tens));
         }
         n = n % 10;
         if (n > 0) {
-            romeNumber.append(RomeNumber.getRomeNumber(n));
+            romeNumber.append(Number.getRomeNumber(n));
         }
 
         return String.valueOf(romeNumber);
+
     }
 
-    enum RomeNumber{
+    enum Number {
         I(1),
         II(2),
         III(3),
@@ -59,19 +60,22 @@ public class RomeCalc extends ArabCalc{
         X(10),
         UNKNOWN(0);
         private final int x;
-        RomeNumber(int x){
+
+        Number(int x) {
             this.x = x;
         }
-        public int getValue(){
-            return x;
-        }
-        public static RomeNumber getRomeNumber(int value) {
-            for (RomeNumber romeNumber : values()){
-                if (romeNumber.x == value){
-                    return romeNumber;
+
+        public static Number getRomeNumber(int value) {
+            for (Number number : values()) {
+                if (number.x == value) {
+                    return number;
                 }
             }
             return UNKNOWN;
+        }
+
+        public int getValue() {
+            return x;
         }
     }
 }
